@@ -33,6 +33,10 @@ function .add[a][b] {
 if:not(.falsy) {
   
 }
+
+if:in-range[min=0][max=20] {
+  
+}
 ```
 
 #### Loops
@@ -41,5 +45,9 @@ if:not(.falsy) {
   --x: 10;
   background-repeat: repeat-x;
   --i: var(--x);
+}
+
+loop:in-range[min=0][max=20] {
+
 }
 ```
