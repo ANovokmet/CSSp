@@ -1,0 +1,37 @@
+{
+    "name": "cssp",
+    "version": "0.0.1",
+    "description": "A CSS programming language",
+    "main": "index.js",
+    "scripts": {
+        "build": "rollup -c",
+        "dev": "rollup -c -w",
+        "test": "node test/test.js",
+        "pretest": "npm run build"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ANovokmet/CSSp.git"
+    },
+    "keywords": [
+        "CSS",
+        "css-programming-language",
+        "css-preprocessor",
+        "css-to-js"
+    ],
+    "author": "Ante Novokmet",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/ANovokmet/CSSp/issues"
+    },
+    "homepage": "https://github.com/ANovokmet/CSSp#readme",
+    "devDependencies": {
+        "@rollup/plugin-commonjs": "^14.0.0",
+        "@rollup/plugin-node-resolve": "^8.4.0",
+        "css-tree": "^1.0.0-alpha.39",
+        "rollup": "^2.21.0"
+    },
+    "files": [
+        "dist"
+    ]
+}
