@@ -8,7 +8,7 @@ export default [
         input: 'src/index.js',
         output: {
             name: 'CSSp',
-            file: "public/cssp.js",
+            file: "docs/cssp.js",
             format: 'umd'
         },
         plugins: [
