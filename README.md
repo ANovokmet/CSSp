@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public\readme-title.png" alt="CSSp"/>
+  <img src="docs\readme-title.png" alt="CSSp"/>
   </br>
   CSS Programming Language.
 </p>
