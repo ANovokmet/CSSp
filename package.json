@@ -27,6 +27,7 @@
     "homepage": "https://github.com/ANovokmet/CSSp#readme",
     "devDependencies": {
         "@rollup/plugin-commonjs": "^14.0.0",
+        "@rollup/plugin-json": "^4.1.0",
         "@rollup/plugin-node-resolve": "^8.4.0",
         "css-tree": "^1.0.0-alpha.39",
         "rollup": "^2.21.0"

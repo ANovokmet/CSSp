@@ -1,25 +1,27 @@
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
 import pkg from './package.json';
 
 export default [
-	{
-		input: 'src/main.js',
-		output: {
-			name: 'howLongUntilLunch',
-			file: pkg.browser,
-			format: 'umd'
-		},
-		plugins: [
-			resolve(), 
-			commonjs()
-		]
-	},
-	{
-		input: 'src/main.js',
-		output: [
-			{ file: pkg.main, format: 'cjs' },
-			{ file: pkg.module, format: 'es' }
-		]
-	}
+    {
+        input: 'src/index.js',
+        output: {
+            name: 'CSSp',
+            file: "public/cssp.js",
+            format: 'umd'
+        },
+        plugins: [
+            json(), 
+            resolve(),
+            commonjs()
+        ]
+    },
+    // {
+    // 	input: 'src/index.js',
+    // 	output: [
+    // 		{ file: "public/cssp.js", format: 'cjs' },
+    // 		{ file: pkg.module, format: 'es' }
+    // 	]
+    // }
 ];

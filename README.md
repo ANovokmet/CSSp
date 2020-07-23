@@ -1,5 +1,8 @@
-# CSSp
-:spaghetti: CSS Programming Language.
+<p align="center">
+  <img src="public\readme-title.png" alt="CSSp"/>
+  </br>
+  CSS Programming Language.
+</p>
 
 # Spec
 
