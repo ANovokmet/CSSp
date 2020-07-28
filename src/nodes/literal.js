@@ -1,7 +1,13 @@
 module.exports = {
     type: 'literal',
     transform(node) {
-        const value = node.value;
+        let value;
+
+        if(node.type == 'Number') {
+            value = node.value;
+        } else if (node.type == 'Identifier') {
+            value = `'${node.name}'`;
+        }
 
         return {
             type: 'literal',

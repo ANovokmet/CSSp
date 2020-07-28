@@ -1,7 +1,7 @@
 module.exports = {
     type: 'property',
     transform(node, ctx) {
-        const key = node.property;
+        const key = this.Identifier(node.property);
         // identifier, literal or expression
         const value = this.ValueExpression(node.value, ctx);
 
@@ -12,7 +12,8 @@ module.exports = {
         };
     },
     transpile(node, ctx) {
-        this.emit(`${node.key}: `);
-        this.ValueExpression(node.value);
+        this.Node(node.key);
+        this.emit(': ');
+        this.Node(node.value);
     }
 }

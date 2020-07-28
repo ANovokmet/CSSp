@@ -1,7 +1,7 @@
 module.exports = {
     type: 'functionDeclaration',
-    transform(node) {
-        const identifier = this.Identifier(node.prelude);
+    transform(node, ctx) {
+        const identifier = this.Identifier(node);
 
         const context = {
             type: 'functionDeclaration',
@@ -9,7 +9,7 @@ module.exports = {
             param: 'ctx'
         };
 
-        const body = this.BlockStatement(node.block, context);
+        const body = this.BlockStatement(ctx.block, context);
 
         return {
             type: 'functionDeclaration',

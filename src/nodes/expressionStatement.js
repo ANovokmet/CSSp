@@ -8,6 +8,6 @@ module.exports = {
         };
     },
     transpile(node) {
-        this.CallExpression(node.expression);
+        this.Node(node.expression);
     }
 }

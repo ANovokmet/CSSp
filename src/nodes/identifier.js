@@ -1,20 +1,23 @@
+const { sanitize } = require('../utils');
+
 module.exports = {
     type: 'identifier',
     transform(node) {
-        // SelectorList, Identifier or null (in case of return)
         let name;
 
-        switch (node.type) {
-            case 'SelectorList':
-                const child = node.children.head.data/* Selector */.children.head.data/* ClassSelector */;
-                name = child.name;
-                break;
-            case 'Identifier':
-                name = node.name;
-                break;
-            default:
-                throw new Error('Identifier: no case for', node);
-                break;
+        if (typeof node == 'string') {
+            name = sanitize(node);
+        } else {
+            switch (node.type) {
+                case 'ClassSelector':
+                case 'TypeSelector':
+                case 'IdSelector':
+                case 'Identifier':
+                    name = sanitize(node.name);
+                    break;
+                default:
+                    throw new Error(`Identifier: no case for ${node.type}`);
+            }
         }
 
         return {

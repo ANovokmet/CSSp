@@ -4,7 +4,7 @@ module.exports = {
         const body = [];
         
         node.children.forEach(child => {
-            const statement = this.AssignmentExpression(child, ctx);
+            const statement = this.AssignmentExpression({ left: child.property, right: child.value }, ctx);
             body.push(statement);
         });
 

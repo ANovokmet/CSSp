@@ -1,7 +1,8 @@
 module.exports = {
     type: 'callExpression',
-    transform(node) {
-        const callee = this.Identifier(node.prelude);
+    transform(node, ctx) {
+        // IdSelector, Rule
+        const callee = this.Identifier(node);
 
         const context = {
             type: 'callExpression',
@@ -9,7 +10,7 @@ module.exports = {
             param: 'ctx'
         };
 
-        const argument = this.ObjectExpression(node.block, context);
+        const argument = this.ObjectExpression(ctx.block, context);
 
         return {
             type: 'callExpression',
@@ -18,9 +19,9 @@ module.exports = {
         };
     },
     transpile(node) {
-        this.Identifier(node.callee);
+        this.Node(node.callee);
         this.emit('(');
-        this.ObjectExpression(node.argument);
+        this.Node(node.argument);
         this.emit(')');
     }
 }

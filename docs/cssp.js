@@ -22449,9 +22449,26 @@
         type: 'assignmentExpression',
         transform(node, ctx) {
             // member expression
-            const left = `${ctx.param}.${node.property}`;
-            // identifier, literal or expression
-            const right = this.ValueExpression(node.value, ctx);
+            let left;
+            let right;
+
+            if(node.left.type == 'TypeSelector') {
+                left = this.Identifier(node.left);
+            } else if(node.left) {
+                left = this.MemberExpression({ object: ctx.param, property: node.left }); // `${ctx.param}.${node.left}`;
+            } else {
+                this.error(node.left);
+            }
+
+            if(node.right.type == 'IdSelector') {
+                right = this.CallExpression(node.right, ctx);
+            } else if(node.right.type == 'Block') {
+                right = this.ObjectExpression(node.right, ctx);
+            } else if(node.right.type == 'Value') {
+                right = this.ValueExpression(node.right, ctx);
+            } else {
+                this.error(node.right);
+            }
 
             return {
                 type: 'assignmentExpression',
@@ -22461,8 +22478,9 @@
             };
         },
         transpile(node, ctx) {
-            this.emit(`${node.left} ${node.operator} `);
-            this.ValueExpression(node.right);
+            this.Node(node.left);
+            this.emit(` ${node.operator} `);
+            this.Node(node.right);
         }
     };
 
@@ -22489,7 +22507,7 @@
             const body = [];
             
             node.children.forEach(child => {
-                const statement = this.AssignmentExpression(child, ctx);
+                const statement = this.AssignmentExpression({ left: child.property, right: child.value }, ctx);
                 body.push(statement);
             });
 
@@ -22521,8 +22539,9 @@
 
     var callExpression = {
         type: 'callExpression',
-        transform(node) {
-            const callee = this.Identifier(node.prelude);
+        transform(node, ctx) {
+            // IdSelector, Rule
+            const callee = this.Identifier(node);
 
             const context = {
                 type: 'callExpression',
@@ -22530,7 +22549,7 @@
                 param: 'ctx'
             };
 
-            const argument = this.ObjectExpression(node.block, context);
+            const argument = this.ObjectExpression(ctx.block, context);
 
             return {
                 type: 'callExpression',
@@ -22539,9 +22558,9 @@
             };
         },
         transpile(node) {
-            this.Identifier(node.callee);
+            this.Node(node.callee);
             this.emit('(');
-            this.ObjectExpression(node.argument);
+            this.Node(node.argument);
             this.emit(')');
         }
     };
@@ -22556,14 +22575,14 @@
             };
         },
         transpile(node) {
-            this.CallExpression(node.expression);
+            this.Node(node.expression);
         }
     };
 
     var functionDeclaration = {
         type: 'functionDeclaration',
-        transform(node) {
-            const identifier = this.Identifier(node.prelude);
+        transform(node, ctx) {
+            const identifier = this.Identifier(node);
 
             const context = {
                 type: 'functionDeclaration',
@@ -22571,7 +22590,7 @@
                 param: 'ctx'
             };
 
-            const body = this.BlockStatement(node.block, context);
+            const body = this.BlockStatement(ctx.block, context);
 
             return {
                 type: 'functionDeclaration',
@@ -22596,22 +22615,34 @@
         }
     };
 
+    function sanitize(value = '') {
+        return value.replace(/-/g, '');
+    }
+
+    var utils$1 = {
+        sanitize
+    };
+
+    const { sanitize: sanitize$1 } = utils$1;
+
     var identifier = {
         type: 'identifier',
         transform(node) {
-            // SelectorList, Identifier or null (in case of return)
             let name;
 
-            switch (node.type) {
-                case 'SelectorList':
-                    const child = node.children.head.data/* Selector */.children.head.data/* ClassSelector */;
-                    name = child.name;
-                    break;
-                case 'Identifier':
-                    name = node.name;
-                    break;
-                default:
-                    throw new Error('Identifier: no case for', node);
+            if (typeof node == 'string') {
+                name = sanitize$1(node);
+            } else {
+                switch (node.type) {
+                    case 'ClassSelector':
+                    case 'TypeSelector':
+                    case 'IdSelector':
+                    case 'Identifier':
+                        name = sanitize$1(node.name);
+                        break;
+                    default:
+                        throw new Error(`Identifier: no case for ${node.type}`);
+                }
             }
 
             return {
@@ -22627,7 +22658,13 @@
     var literal = {
         type: 'literal',
         transform(node) {
-            const value = node.value;
+            let value;
+
+            if(node.type == 'Number') {
+                value = node.value;
+            } else if (node.type == 'Identifier') {
+                value = `'${node.name}'`;
+            }
 
             return {
                 type: 'literal',
@@ -22636,6 +22673,41 @@
         },
         transpile(node) {
             this.emit(node.value);
+        }
+    };
+
+    var memberExpression = {
+        type: 'memberExpression',
+        transform(node, ctx) {
+            let object;
+            let property;
+
+            if(node.object.type == 'TypeSelector') {
+                object = this.Identifier(node.object);
+            } else if(node.object) {
+                object = this.Identifier(node.object);
+            } else {
+                this.error(node);
+            }
+
+            if(node.property.type == 'IdSelector') {
+                property = this.CallExpression(node.property, ctx);
+            } else if(node.property) {
+                property = this.Identifier(node.property);
+            } else {
+                this.error(node);
+            }
+
+            return {
+                type: 'memberExpression',
+                object,
+                property
+            };
+        },
+        transpile(node, ctx) {
+            this.Node(node.object);
+            this.emit('.');
+            this.Node(node.property);
         }
     };
 
@@ -22671,7 +22743,7 @@
     var property = {
         type: 'property',
         transform(node, ctx) {
-            const key = node.property;
+            const key = this.Identifier(node.property);
             // identifier, literal or expression
             const value = this.ValueExpression(node.value, ctx);
 
@@ -22682,8 +22754,9 @@
             };
         },
         transpile(node, ctx) {
-            this.emit(`${node.key}: `);
-            this.ValueExpression(node.value);
+            this.Node(node.key);
+            this.emit(': ');
+            this.Node(node.value);
         }
     };
 
@@ -22700,19 +22773,97 @@
         }
     };
 
-    function getDeclarationNode(node) {
-
-        const child = node.prelude.children.head.data/* Selector */.children.head.data/* ClassSelector */;
-        
-        if(child.type == 'ClassSelector')
-            return this.FunctionDeclaration(node);
-
-        if(child.type == 'IdSelector')
-            return this.ExpressionStatement(node);
-            
-        throw new Error('Identifier: no case for', node);
+    class Context {
+        constructor(options) {
+            this.current = options.head;
+            this.block = options.block;
+        }
+        next() {
+            this.current = this.current.next;
+            return this.current && this.current.data;
+        }
+        node() {
+            return this.current.data;
+        }
     }
 
+    function getStatementNodes(node) {
+        const statements = [];
+        
+        node.prelude.children.forEach(child => {
+            switch (child.type) {
+                case 'Selector':
+                    const expression = getExpression.call(this, child, node.block);
+                    statements.push(expression);
+                    break;
+                default:
+                    this.error(child);
+            }
+        });
+
+        return statements;
+    }
+
+    function getExpression(node, block) {
+        let expression;
+
+        const ctx = new Context({ head: node.children.head, block });
+
+        let child = ctx.node();
+        switch (child.type) {
+            case 'IdSelector':
+                // callExpression
+                expression = acceptIdSelector.call(this, child, ctx);
+                break;
+            case 'TypeSelector':
+                // identifier
+                expression = acceptTypeSelector.call(this, child, ctx);
+                break;
+            case 'ClassSelector':
+                const functionDecl = this.FunctionDeclaration(child, ctx);
+                return functionDecl;
+            default:
+                this.error(child);
+        }
+
+        return {
+            type: 'expressionStatement',
+            expression
+        };
+    }
+
+    function acceptIdSelector(node, ctx) {
+        let right = node;
+
+        let next = ctx.next();
+        if(!next) {
+            return this.CallExpression(node, ctx);
+        }
+
+        // assigmentExpression
+        if(next.name == '>') { // expect '>'
+            next = ctx.next();
+            return this.AssignmentExpression({ left: next, right }, ctx);
+        }
+        
+        this.error(node);
+    }
+
+    function acceptTypeSelector(node, ctx) {
+        let left = node;
+
+        let next = ctx.next();
+        if(!next) {
+            return this.AssignmentExpression({ left, right: ctx.block }, ctx);
+        }
+
+        if(next.type == 'WhiteSpace') { // expect ' '
+            next = ctx.next();
+            return this.MemberExpression({ object: left, property: next }, ctx);
+        }
+        
+        this.error(node);
+    }
 
     var root = {
         type: 'root',
@@ -22724,8 +22875,8 @@
                     case 'Rule': 
                         // function declaration 
                         // or statement
-                        const statement = getDeclarationNode.call(this, child);
-                        statements.push(statement);
+                        const statement = getStatementNodes.call(this, child);
+                        statements.push(...statement);
                         break;
                     default:
                         this.error(child);
@@ -22740,17 +22891,8 @@
         },
         transpile(node) {
             node.statements.forEach(child => {
-                switch(child.type) {
-                    case 'functionDeclaration':
-                        this.FunctionDeclaration(child);
-                        break;
-                    case 'expressionStatement':
-                        this.ExpressionStatement(child);
-                        this.emit(';');
-                        break;
-                    default:
-                        this.error(child);
-                }
+                this.Node(child);
+                if(child.type == 'expressionStatement') this.emit(';');
                 this.newline(false);
             });
         }
@@ -22765,6 +22907,7 @@
 
             node.children.forEach(child => {
                 switch(child.type) {
+                    case 'Identifier':
                     case 'Number':
                         if(!left) {
                             left = this.Literal(child);
@@ -22804,6 +22947,7 @@
         FunctionDeclaration: functionDeclaration,
         Identifier: identifier,
         Literal: literal,
+        MemberExpression: memberExpression,
         ObjectExpression: objectExpression,
         Property: property,
         ReturnStatement: returnStatement,

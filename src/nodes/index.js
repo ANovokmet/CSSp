@@ -7,6 +7,7 @@ module.exports = {
     FunctionDeclaration: require('./functionDeclaration'),
     Identifier: require('./identifier'),
     Literal: require('./literal'),
+    MemberExpression: require('./memberExpression'),
     ObjectExpression: require('./objectExpression'),
     Property: require('./property'),
     ReturnStatement: require('./returnStatement'),

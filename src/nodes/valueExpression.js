@@ -7,6 +7,7 @@ module.exports = {
 
         node.children.forEach(child => {
             switch(child.type) {
+                case 'Identifier':
                 case 'Number':
                     if(!left) {
                         left = this.Literal(child);

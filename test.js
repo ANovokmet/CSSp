@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const buf = fs.readFileSync('./samples/function.css');
+const buf = fs.readFileSync('./samples/combinators.css');
 const content = buf.toString();
 
 const transformer = require('./src/transform');

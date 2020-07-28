@@ -1,11 +1,5 @@
 const cm = CodeMirror(document.getElementById('code'), {
-    value: `.sum {
-    height: calc(10 + 20);
-}
-    
-#sum {
-    height: 10;
-}`,
+    value: localStorage.getItem('last_value') || `.sum {\n\theight: calc(10 + 20);\n}\n\n#sum {\n\theight: 10;\n}`,
     mode: 'css',
     lineNumbers: true,
     styleActiveLine: true,
@@ -25,7 +19,7 @@ const cm_js = CodeMirror(document.getElementById('js-code'), {
 
 function onChange(cm) {
     const value = cm.getValue();
-    console.log(value);
+    localStorage.setItem('last_value', value);
 
     try {
         let js = '';
@@ -35,6 +29,7 @@ function onChange(cm) {
             js = CSSp.parse(value);
             cm_js.setValue(js);
         } catch(e) {
+            console.error(e);
             cm_js.setValue(e.stack);
         }
 
@@ -42,6 +37,7 @@ function onChange(cm) {
         console.log(result);
         resultElement.textContent = JSON.stringify(result, null, '\t');
     } catch (e) {
+        console.error(e);
         resultElement.textContent = e.toString();
     }
 }
