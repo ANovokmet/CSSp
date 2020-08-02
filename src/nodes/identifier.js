@@ -2,7 +2,7 @@ const { sanitize } = require('../utils');
 
 module.exports = {
     type: 'identifier',
-    transform(node) {
+    transform(node, ctx = '') {
         let name;
 
         if (typeof node == 'string') {
@@ -13,7 +13,8 @@ module.exports = {
                 case 'TypeSelector':
                 case 'IdSelector':
                 case 'Identifier':
-                    name = sanitize(node.name);
+                case 'identifier':
+                    name = ctx + sanitize(node.name);
                     break;
                 default:
                     throw new Error(`Identifier: no case for ${node.type}`);

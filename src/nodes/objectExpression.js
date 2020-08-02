@@ -15,14 +15,21 @@ module.exports = {
     },
     transpile(node, ctx) {
         this.emit('{');
-        this.newline();
-        this.indent();
-        node.properties.forEach(child => {
-            this.Property(child, ctx);
-            this.emit(',');
+        if(node.properties.length > 1) {
             this.newline();
-        });
-        this.unindent();
+            this.indent();
+            node.properties.forEach((child, i) => {
+                this.Property(child, ctx);
+                if(i !== node.properties.length - 1) this.emit(',');
+                this.newline();
+            });
+            this.unindent();
+        } else {
+            node.properties.forEach((child, i) => {
+                this.Property(child, ctx);
+                if(i !== node.properties.length - 1) this.emit(',');
+            });
+        }
         this.emit('}');
     }
 }

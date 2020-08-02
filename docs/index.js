@@ -1,11 +1,29 @@
+const examples = {
+    call: `.sum {\n\theight: calc(10 + 20);\n}\n\n#sum {\n\theight: 10;\n}`,
+    if: `.is-not-5 {\n\t--result: calc(var(--a) - 5);\n}\nconsole #log:not(#is-not-5 result) {\n\t--a: 5;\n\t--logged: 'A is 5';\n}`,
+    loop: `.is-not-0 {\n\t--a: calc(var(--a) - 1);\n\t--result: calc(var(--a));\n}\n\nconsole #log:matches(#is-not-0 result) {\n\t--a: 10;\n}`
+}
+
 const cm = CodeMirror(document.getElementById('code'), {
-    value: localStorage.getItem('last_value') || `.sum {\n\theight: calc(10 + 20);\n}\n\n#sum {\n\theight: 10;\n}`,
+    value: loadValue(),
     mode: 'css',
     lineNumbers: true,
     styleActiveLine: true,
     matchBrackets: true,
     theme: 'blackboard'
 });
+
+function loadValue() {
+    if(window.location.hash) {
+        const key = window.location.hash.substr(1);
+        if(examples[key])
+            return examples[key];
+    }
+    if(localStorage.getItem('last_value'))
+        return localStorage.getItem('last_value');
+
+    return examples['call'];
+}
 
 const resultElement = document.getElementById('result');
 

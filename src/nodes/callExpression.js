@@ -2,7 +2,8 @@ module.exports = {
     type: 'callExpression',
     transform(node, ctx) {
         // IdSelector, Rule
-        const callee = this.Identifier(node);
+        const callee = this.Identifier(node.callee);
+        let argument;
 
         const context = {
             type: 'callExpression',
@@ -10,8 +11,12 @@ module.exports = {
             param: 'ctx'
         };
 
-        const argument = this.ObjectExpression(ctx.block, context);
-
+        if(node.argument.type == 'block') {
+            argument = this.ObjectExpression(ctx.block, context);
+        } else if(node.argument) {
+            argument = this.Identifier(node.argument);
+        }
+        
         return {
             type: 'callExpression',
             callee,

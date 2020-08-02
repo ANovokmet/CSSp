@@ -2,19 +2,23 @@ class Context {
     constructor(options) {
         this.current = options.head;
         this.block = options.block;
+        this.argId = 0;
     }
     next() {
         this.current = this.current.next;
         return this.current && this.current.data;
     }
     node() {
-        return this.current.data;
+        return this.current && this.current.data;
+    }
+    getArg() {
+        return `$${this.argId++}`
     }
 }
 
 function getStatementNodes(node) {
     const statements = [];
-    
+
     node.prelude.children.forEach(child => {
         switch (child.type) {
             case 'Selector':
@@ -30,67 +34,163 @@ function getStatementNodes(node) {
 }
 
 function getExpression(node, block) {
-    let expression;
-
     const ctx = new Context({ head: node.children.head, block });
+    let next = ctx.node();
 
-    let child = ctx.node();
-    switch (child.type) {
+    switch (next.type) {
         case 'IdSelector':
-            // callExpression
-            expression = acceptIdSelector.call(this, child, ctx);
-            break;
         case 'TypeSelector':
-            // identifier
-            expression = acceptTypeSelector.call(this, child, ctx);
+            const arg = ctx.getArg();
+            const target = pipeExpr.call(this, ctx, arg);
+            const param = this.ObjectExpression(block, ctx);
+            const argument = this.Identifier(arg);
+            return {
+                type: 'expressionStatement',
+                expression: buildPipeExpr(param, target, argument)
+            }
             break;
         case 'ClassSelector':
-            const functionDecl = this.FunctionDeclaration(child, ctx);
+            const functionDecl = this.FunctionDeclaration(next, ctx);
             return functionDecl;
             break;
         default:
             this.error(child);
     }
+}
 
+function buildPipeExpr(param, target, argument) {
     return {
-        type: 'expressionStatement',
-        expression
+        type: 'pipeExpression',
+        argument,
+        target: {
+            type: 'expressionStatement',
+            expression: target
+        },
+        param
     };
 }
 
-function acceptIdSelector(node, ctx) {
-    let right = node;
+function pipeExpr(ctx, arg) {
+    let left = memberExp.call(this, ctx, arg);
 
-    let next = ctx.next();
-    if(!next) {
-        return this.CallExpression(node, ctx);
+    if (left.type != 'callExpression') {
+        left = {
+            type: 'assignmentExpression',
+            operator: '=',
+            left,
+            right: this.Identifier(arg)
+        }
     }
 
-    // assigmentExpression
-    if(next.name == '>') { // expect '>'
-        next = ctx.next();
-        return this.AssignmentExpression({ left: next, right }, ctx);
-    }
-    
-    this.error(node);
+    left = ifExpr.call(this, ctx, arg, left);
+    return left;
 }
 
-function acceptTypeSelector(node, ctx) {
-    let left = node;
-
-    let next = ctx.next();
-    if(!next) {
-        return this.AssignmentExpression({ left, right: ctx.block }, ctx);
+function memberExp(ctx, arg) {
+    let curr = ctx.node();
+    let left = identifierExpr.call(this, ctx, arg);
+    if (curr.type == 'IdSelector') {
+        left = {
+            type: 'callExpression',
+            callee: left,
+            argument: this.Identifier(arg)
+        }
     }
-
-    if(next.type == 'WhiteSpace') { // expect ' '
-        next = ctx.next();
-        return this.MemberExpression({ object: left, property: next }, ctx);
-    }
-    
-    this.error(node);
+    let right = memberExp$.call(this, ctx, arg, left);
+    return right;
 }
 
+function memberExp$(ctx, arg, child) {
+    let curr = ctx.node();
+    if (curr && curr.type == 'WhiteSpace') {
+        curr = ctx.next();
+        const right = identifierExpr.call(this, ctx, arg);
+
+        let left = {
+            type: 'memberExpression',
+            object: child,
+            property: right
+        };
+        if (curr.type == 'IdSelector') {
+            left = {
+                type: 'callExpression',
+                callee: left,
+                argument: this.Identifier(arg)
+            }
+        } else if (curr.type != 'TypeSelector') {
+            throw new Error();
+        }
+
+        return memberExp$.call(this, ctx, arg, left);
+    } else {
+        return child;
+    }
+}
+
+function ifExpr(ctx, arg, child) {
+    let curr = ctx.node();
+    if (curr && curr.type == 'PseudoClassSelector' && curr.name == 'not') {
+        const childCtx = new Context({ head: curr.children.head.data.children.head.data.children.head });
+        const test = memberExp.call(this, childCtx, arg);
+
+        ctx.next();
+        const ch = ifExpr.call(this, ctx, arg, child);
+        return {
+            type: 'ifStatement',
+            test,
+            consequent: ch,
+        };
+    }
+    else if (curr && curr.type == 'PseudoClassSelector' && curr.name == 'matches') {
+        const childCtx = new Context({ head: curr.children.head.data.children.head.data.children.head });
+        const test = memberExp.call(this, childCtx, arg);
+
+        ctx.next();
+        const ch = ifExpr.call(this, ctx, arg, child);
+        return {
+            type: 'whileStatement',
+            test,
+            body: ch,
+        };
+    } else if (curr && curr.name == '>') {
+        ctx.next();
+        const argument = this.Identifier(ctx.getArg());
+        const right = pipeExpr.call(this, ctx, argument);
+        return buildPipeExpr(child, right, argument);
+    }
+    return child;
+}
+
+function identifierExpr(ctx) {
+    const next = ctx.node();
+    ctx.next();
+    switch (next.type) {
+        case 'IdSelector':
+        case 'TypeSelector':
+            return this.Identifier(next);
+        default:
+            this.error(next);
+    }
+}
+
+/*
+pipeExpr -> callExpr (">" pipeExpr)     
+callExpr -> (memberExpr) <IdSelector>
+memberExpr -> memberExpr " " <Identifier> | <Identifier>
+
+memberExpr -> <Identifier> memberExpr'
+memberExpr' -> " " <Identifier> memberExpr' | <empty>
+
+*/
+
+
+/*
+pipeExpr -> callExpr | memberExpr (">" pipeExpr)    
+
+memberExpr -> <Identifier> memberExpr'
+memberExpr' -> " " <Identifier> memberExpr' | <empty>
+
+*/
 module.exports = {
     type: 'root',
     transform(node) {
@@ -98,7 +198,7 @@ module.exports = {
 
         node.children.forEach(child => {
             switch (child.type) {
-                case 'Rule': 
+                case 'Rule':
                     // function declaration 
                     // or statement
                     const statement = getStatementNodes.call(this, child);
@@ -118,7 +218,6 @@ module.exports = {
     transpile(node) {
         node.statements.forEach(child => {
             this.Node(child);
-            if(child.type == 'expressionStatement') this.emit(';');
             this.newline(false);
         });
     }

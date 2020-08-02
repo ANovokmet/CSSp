@@ -1,5 +1,3 @@
-const { property } = require("css-tree");
-
 module.exports = {
     type: 'memberExpression',
     transform(node, ctx) {

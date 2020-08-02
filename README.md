@@ -29,7 +29,7 @@ data = {
 }
 /* 
 function add(x) {
-    x.result = a + 5;
+    x.result = a + b;
     return x; 
 } 
 */
@@ -74,7 +74,7 @@ function isNot5(x) {
 } 
 */
 
-data > console #log:not(#is-not-5 result) {
+console #log:not(#is-not-5 result) {
     --a: 5;
     --logged: 'A is 5';
 }
@@ -100,7 +100,7 @@ data > console #log:not(#is-not-5 result) {
     }
 */
 
-loop > console #log:in-range(#while-not-0 result) {
+console #log:matches(#is-not-0 result) {
     --a: 10;
 }
 /*

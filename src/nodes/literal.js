@@ -7,6 +7,8 @@ module.exports = {
             value = node.value;
         } else if (node.type == 'Identifier') {
             value = `'${node.name}'`;
+        } else if (node.type == 'String') {
+            value = `${node.value}`;
         }
 
         return {

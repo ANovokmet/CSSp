@@ -26,7 +26,7 @@ const transpiler = {
     },
     indent() {
         this.whitespace += '  ';
-        this.buffer += this.whitespace;
+        this.buffer += '  ';
     },
     unindent() {
         this.whitespace = this.whitespace.substring(0, this.whitespace.length - 2);
@@ -36,7 +36,7 @@ const transpiler = {
         throw new Error(`This.error transpiling ${node.type} node`, node);
     },
     Node(node) {
-        if(this.nodes.has(node.type)) {
+        if(node && this.nodes.has(node.type)) {
             this.nodes.get(node.type).call(this, node);
         } else {
             this.error(node);

@@ -8,6 +8,7 @@ module.exports = {
         node.children.forEach(child => {
             switch(child.type) {
                 case 'Identifier':
+                case 'String':
                 case 'Number':
                     if(!left) {
                         left = this.Literal(child);
@@ -24,7 +25,7 @@ module.exports = {
                     if(child.name == 'calc')
                         left = this.ValueExpression(child);
                     if(child.name == 'var')
-                        left = this.Identifier(child);
+                        left = this.Identifier(child.children.head.data, 'ctx.');
                     break;
                 case 'WhiteSpace':
                 default:

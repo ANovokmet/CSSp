@@ -9,5 +9,7 @@ module.exports = {
     },
     transpile(node) {
         this.Node(node.expression);
+        if(node.expression.type != 'functionDeclaration')
+            this.emit(';');
     }
 }

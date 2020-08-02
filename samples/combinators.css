@@ -1,20 +1,8 @@
-#console > log {
-
-
+.is-not-5 {
+    --result: calc(var(--a) - 5);
 }
 
-console #log {
-
-}
-
-#call {
-
-}
-
-variable {
-
-}
-
-.func {
-    
+console #log:not(#is-not-5 result) {
+    --a: 5;
+    --logged: 'A is 5';
 }
