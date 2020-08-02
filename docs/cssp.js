@@ -23088,8 +23088,14 @@
                         // var or calc
                         if(child.name == 'calc')
                             left = this.ValueExpression(child);
-                        if(child.name == 'var')
-                            left = this.Identifier(child.children.head.data, 'ctx.');
+                        if(child.name == 'var') {
+                            if(!left) {
+                                left = this.Identifier(child.children.head.data, 'ctx.');
+                            } else {
+                                right = this.Identifier(child.children.head.data, 'ctx.');
+                                left = this.BinaryExpression(left, right, operator);
+                            }
+                        }
                         break;
                 }
             });

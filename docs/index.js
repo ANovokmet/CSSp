@@ -1,7 +1,8 @@
 const examples = {
-    call: `.sum {\n\theight: calc(10 + 20);\n}\n\n#sum {\n\theight: 10;\n}`,
+    call: `.sum {\n\theight: calc(10 + 20);\n}\n\n#sum > console #log {\n\theight: 10;\n}`,
     if: `.is-not-5 {\n\t--result: calc(var(--a) - 5);\n}\nconsole #log:not(#is-not-5 result) {\n\t--a: 5;\n\t--logged: 'A is 5';\n}`,
-    loop: `.is-not-0 {\n\t--a: calc(var(--a) - 1);\n\t--result: calc(var(--a));\n}\n\nconsole #log:matches(#is-not-0 result) {\n\t--a: 10;\n}`
+    loop: `.is-not-0 {\n\t--a: calc(var(--a) - 1);\n\t--result: calc(var(--a));\n}\n\nconsole #log:matches(#is-not-0 result) {\n\t--a: 10;\n}`,
+    fibonacci: `.fib {\n\t--prevPrev: calc(var(--prev));\n\t--prev: calc(var(--curr));\n\t--curr: calc(var(--prevPrev) + var(--prev));\n}\n\n.fib-init {\n\t--prev: 0;\n\t--curr: 1;\n}\n\n.loop {\n\t--n: calc(var(--n) - 1);\n}\n\n#fib-init > #fib:matches(#loop n) > console #log {\n\t--n: 10;\n}`
 }
 
 const cm = CodeMirror(document.getElementById('code'), {
