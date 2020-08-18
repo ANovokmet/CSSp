@@ -1,8 +1,18 @@
-.is-not-5 {
-    --result: calc(var(--a) - 5);
+.fib {
+	--prevPrev: calc(var(--prev));
+	--prev: calc(var(--curr));
+	--curr: calc(var(--prevPrev) + var(--prev))
 }
 
-console #log:not(#is-not-5 result) {
-    --a: 5;
-    --logged: 'A is 5';
+.fib-init {
+	--prev: 0;
+	--curr: 1;
+}
+
+.loop {
+	--n: calc(var(--n) - 1);
+}
+
+#fib-init > #fib:matches(#loop n) > console #log {
+	--n: 10;
 }

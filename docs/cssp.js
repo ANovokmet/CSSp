@@ -23114,11 +23114,20 @@
         transform(node, ctx) {
         },
         transpile(node, ctx) {
+            if(this.guardLoops) {
+                this.includeLoopGuard();
+                this.emit('const $g = loop_guard(100);');
+                this.newline();
+            }
             this.emit('while(');
             this.Node(node.test);
             this.emit('){');
             this.newline();
             this.indent();
+            if(this.guardLoops) {
+                this.emit('$g();');
+                this.newline();
+            }
             this.Node(node.body);
             this.newline();
             this.unindent();
@@ -23169,10 +23178,28 @@
 
     var transform$1 = transformer;
 
+    function loop_guard(timeout) {
+    	const start = Date.now();
+    	return () => {
+    		if (Date.now() - start > timeout) {
+    			throw new Error(`Infinite loop detected`);
+    		}
+    	};
+    }
+
+    var types = {
+        loop_guard
+    };
+
+    const { loop_guard: loop_guard$1 } = types;
+
     const transpiler = {
-        parse(ast) {
+        parse(ast, options = {}) {
+            this.guardLoops = options.guardLoops !== undefined ? options.guardLoops : true;
             this.buffer = '';
             this.whitespace = '';
+            this.runtimeBuffer = '';
+            this.hasLoopGuard = false;
 
             switch (ast.type) {
                 case 'root':
@@ -23183,6 +23210,10 @@
                     break;
             }
 
+            if(this.runtimeBuffer) {
+                this.newline();
+                this.emit(this.runtimeBuffer);
+            }
             return this.buffer;
         },
         emit(token) {
@@ -23210,6 +23241,12 @@
             } else {
                 this.error(node);
             }
+        },
+        includeLoopGuard() {
+            if(!this.hasLoopGuard) {
+                this.hasLoopGuard = true;
+                this.runtimeBuffer += loop_guard$1.toString();
+            }
         }
     };
 
@@ -23229,6 +23266,8 @@
     }
 
     var src = {
+        transform: (src) => transform$1.parse(src),
+        transpile: (ast) => transpile.parse(ast),
         parse: parse$1
     };
 

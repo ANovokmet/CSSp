@@ -1,9 +1,13 @@
 const nodeSettings = require('./nodes');
+const { loop_guard } = require('./runtime/types');
 
 const transpiler = {
-    parse(ast) {
+    parse(ast, options = {}) {
+        this.guardLoops = options.guardLoops !== undefined ? options.guardLoops : true;
         this.buffer = '';
         this.whitespace = '';
+        this.runtimeBuffer = '';
+        this.hasLoopGuard = false;
 
         switch (ast.type) {
             case 'root':
@@ -14,6 +18,10 @@ const transpiler = {
                 break;
         }
 
+        if(this.runtimeBuffer) {
+            this.newline();
+            this.emit(this.runtimeBuffer);
+        }
         return this.buffer;
     },
     emit(token) {
@@ -40,6 +48,12 @@ const transpiler = {
             this.nodes.get(node.type).call(this, node);
         } else {
             this.error(node);
+        }
+    },
+    includeLoopGuard() {
+        if(!this.hasLoopGuard) {
+            this.hasLoopGuard = true;
+            this.runtimeBuffer += loop_guard.toString();
         }
     }
 }

@@ -45,7 +45,9 @@ function onChange(cm) {
 
         console.log(js);
         try {
-            js = CSSp.parse(value);
+            //js = CSSp.parse(value);
+            window.ast = CSSp.transform(value);
+            js = CSSp.transpile(window.ast);
             cm_js.setValue(js);
         } catch(e) {
             console.error(e);

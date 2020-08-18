@@ -8,5 +8,7 @@ function parse(source) {
 }
 
 module.exports = {
+    transform: (src) => transformer.parse(src),
+    transpile: (ast) => transpiler.parse(ast),
     parse
 }
