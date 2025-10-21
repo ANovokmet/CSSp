@@ -1,4 +1,4 @@
-import CSSp from './index';
+import * as CSSp from './index';
 
 const examples = {
     call: `.sum {\n\theight: calc(10 + 20);\n}\n\n#sum > console #log {\n\theight: 10;\n}`,

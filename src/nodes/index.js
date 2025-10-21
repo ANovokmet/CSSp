@@ -1,19 +1,17 @@
-module.exports = {
-    AssignmentExpression: require('./assignmentExpression'),
-    BinaryExpression: require('./binaryExpression'),
-    BlockStatement: require('./blockStatement'),
-    CallExpression: require('./callExpression'),
-    ExpressionStatement: require('./expressionStatement'),
-    FunctionDeclaration: require('./functionDeclaration'),
-    Identifier: require('./identifier'),
-    IfStatement: require('./ifStatement'),
-    Literal: require('./literal'),
-    MemberExpression: require('./memberExpression'),
-    ObjectExpression: require('./objectExpression'),
-    PipeExpression: require('./pipeExpression'),
-    Property: require('./property'),
-    ReturnStatement: require('./returnStatement'),
-    Root: require('./root'),
-    ValueExpression: require('./valueExpression'),
-    WhileStatement: require('./whileStatement')
-}
+export { default as AssignmentExpression } from './assignmentExpression';
+export { default as BinaryExpression } from './binaryExpression';
+export { default as BlockStatement } from './blockStatement';
+export { default as CallExpression } from './callExpression';
+export { default as ExpressionStatement } from './expressionStatement';
+export { default as FunctionDeclaration } from './functionDeclaration';
+export { default as Identifier } from './identifier';
+export { default as IfStatement } from './ifStatement';
+export { default as Literal } from './literal';
+export { default as MemberExpression } from './memberExpression';
+export { default as ObjectExpression } from './objectExpression';
+export { default as PipeExpression } from './pipeExpression';
+export { default as Property } from './property';
+export { default as ReturnStatement } from './returnStatement';
+export { default as Root } from './root';
+export { default as ValueExpression } from './valueExpression';
+export { default as WhileStatement } from './whileStatement';

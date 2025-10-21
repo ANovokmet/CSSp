@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     type: 'memberExpression',
     transform(node, ctx) {
         let object;

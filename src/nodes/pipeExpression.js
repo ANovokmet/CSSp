@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     type: 'pipeExpression',
     transform(node, ctx) {
         let param, target, argument = '$1';

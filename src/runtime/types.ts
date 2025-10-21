@@ -1,10 +1,10 @@
 function Color(value) {
-    // validate valid color
-    this.val = value;
+	// validate valid color
+	this.val = value;
 }
 
-Color.prototype.toString = function() {
-    return this.val;
+Color.prototype.toString = function () {
+	return this.val;
 }
 
 function loop_guard(timeout) {
@@ -16,6 +16,6 @@ function loop_guard(timeout) {
 	};
 }
 
-module.exports = {
-    loop_guard
+export {
+	loop_guard
 }

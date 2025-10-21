@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     type: 'functionDeclaration',
     transform(node, ctx) {
         const identifier = this.Identifier(node);

@@ -1,5 +1,5 @@
-const csstree = require('css-tree');
-const nodeSettings = require('./nodes');
+import csstree from 'css-tree';
+import * as nodeSettings from './nodes';
 
 const transformer = {
     parse(source) {
@@ -23,4 +23,4 @@ for(const key in nodeSettings) {
     transformer[key] = nodeSettings[key].transform;
 }
 
-module.exports = transformer;
+export default transformer;

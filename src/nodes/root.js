@@ -191,7 +191,7 @@ memberExpr -> <Identifier> memberExpr'
 memberExpr' -> " " <Identifier> memberExpr' | <empty>
 
 */
-module.exports = {
+export default {
     type: 'root',
     transform(node) {
         const statements = [];

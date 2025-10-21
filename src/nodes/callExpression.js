@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     type: 'callExpression',
     transform(node, ctx) {
         // IdSelector, Rule

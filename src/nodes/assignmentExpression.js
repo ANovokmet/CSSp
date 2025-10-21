@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     type: 'assignmentExpression',
     transform(node, ctx) {
         // member expression
