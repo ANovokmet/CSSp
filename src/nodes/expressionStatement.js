@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     type: 'expressionStatement',
     transform(node) {
         const expression = this.CallExpression(node);

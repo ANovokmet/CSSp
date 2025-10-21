@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     type: 'property',
     transform(node, ctx) {
         const key = this.Identifier(node.property);

@@ -1,8 +1,8 @@
-const nodeSettings = require('./nodes');
-const { loop_guard } = require('./runtime/types');
+import * as nodeSettings from './nodes';
+import { loop_guard } from './runtime/types';
 
 const transpiler = {
-    parse(ast, options = {}) {
+    parse(ast, options: any = {}) {
         this.guardLoops = options.guardLoops !== undefined ? options.guardLoops : true;
         this.buffer = '';
         this.whitespace = '';
@@ -55,14 +55,14 @@ const transpiler = {
             this.hasLoopGuard = true;
             this.runtimeBuffer += loop_guard.toString();
         }
-    }
+    },
+    nodes: new Map(),
 }
 
-transpiler.nodes = new Map();
 for(const key in nodeSettings) {
     const node = nodeSettings[key];
     transpiler.nodes.set(node.type, node.transpile);
     transpiler[key] = node.transpile;
 }
 
-module.exports = transpiler;
+export default transpiler;

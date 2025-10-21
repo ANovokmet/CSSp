@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     type: 'binaryExpression',
     transform(left, right, operator) {
         return {

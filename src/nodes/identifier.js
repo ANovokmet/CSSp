@@ -1,6 +1,6 @@
-const { sanitize } = require('../utils');
+import { sanitize } from '../utils';
 
-module.exports = {
+export default {
     type: 'identifier',
     transform(node, ctx = '') {
         let name;

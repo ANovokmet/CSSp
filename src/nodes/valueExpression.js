@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     type: 'valueExpression',
     transform(node, ctx) {
         let left;

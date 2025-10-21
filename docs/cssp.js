@@ -2,25 +2,6 @@
   typeof define === "function" && define.amd ? define(factory) : factory();
 })((function() {
   "use strict";
-  function _mergeNamespaces(n, m) {
-    for (var i = 0; i < m.length; i++) {
-      const e = m[i];
-      if (typeof e !== "string" && !Array.isArray(e)) {
-        for (const k in e) {
-          if (k !== "default" && !(k in n)) {
-            const d = Object.getOwnPropertyDescriptor(e, k);
-            if (d) {
-              Object.defineProperty(n, k, d.get ? d : {
-                enumerable: true,
-                get: () => e[k]
-              });
-            }
-          }
-        }
-      }
-    }
-    return Object.freeze(Object.defineProperty(n, Symbol.toStringTag, { value: "Module" }));
-  }
   function getDefaultExportFromCjs(x) {
     return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
   }
@@ -1210,14 +1191,14 @@
         custom
       });
     }
-    function getPropertyDescriptor(property) {
-      if (hasOwnProperty.call(properties2, property)) {
-        return properties2[property];
+    function getPropertyDescriptor(property2) {
+      if (hasOwnProperty.call(properties2, property2)) {
+        return properties2[property2];
       }
-      var name = property;
-      var hack = property[0];
+      var name = property2;
+      var hack = property2[0];
       if (hack === "/") {
-        hack = property[1] === "/" ? "//" : "/";
+        hack = property2[1] === "/" ? "//" : "/";
       } else if (hack !== "_" && hack !== "*" && hack !== "$" && hack !== "#" && hack !== "+" && hack !== "&") {
         hack = "";
       }
@@ -1225,12 +1206,12 @@
       if (!custom) {
         name = name.toLowerCase();
         if (hasOwnProperty.call(properties2, name)) {
-          return properties2[property] = properties2[name];
+          return properties2[property2] = properties2[name];
         }
       }
       var vendor = !custom ? getVendorPrefix(name, hack.length) : "";
       var prefix = name.substr(0, hack.length + vendor.length);
-      return properties2[property] = Object.freeze({
+      return properties2[property2] = Object.freeze({
         basename: name.substr(prefix.length),
         name: name.substr(hack.length),
         hack,
@@ -1991,8 +1972,8 @@
     var SEMITONES = {
       "st": true
     };
-    function charCode(str, index2) {
-      return index2 < str.length ? str.charCodeAt(index2) : 0;
+    function charCode(str, index) {
+      return index < str.length ? str.charCodeAt(index) : 0;
     }
     function eqStr(actual, expected) {
       return cmpStr(actual, 0, actual.length, expected);
@@ -2823,7 +2804,7 @@
           return maybeToken(tokenizer2);
       }
     }
-    function parse2(source) {
+    function parse(source) {
       var tokenizer2 = new Tokenizer(source);
       var result2 = readImplicitGroup(tokenizer2);
       if (tokenizer2.pos !== source.length) {
@@ -2834,8 +2815,8 @@
       }
       return result2;
     }
-    parse2("[a&&<b>#|<'c'>*||e() f{2} /,(% g#{1,2} h{2,})]!");
-    parse_1 = parse2;
+    parse("[a&&<b>#|<'c'>*||e() f{2} /,(% g#{1,2} h{2,})]!");
+    parse_1 = parse;
     return parse_1;
   }
   var walk;
@@ -2965,7 +2946,7 @@
   function requireMatchGraph() {
     if (hasRequiredMatchGraph) return matchGraph;
     hasRequiredMatchGraph = 1;
-    var parse2 = requireParse();
+    var parse = requireParse();
     var MATCH = { type: "Match" };
     var MISMATCH = { type: "Mismatch" };
     var DISALLOW_EMPTY = { type: "DisallowEmpty" };
@@ -3258,7 +3239,7 @@
       DISALLOW_EMPTY,
       buildMatchGraph: function(syntaxTree, ref) {
         if (typeof syntaxTree === "string") {
-          syntaxTree = parse2(syntaxTree);
+          syntaxTree = parse(syntaxTree);
         }
         return {
           type: "MatchGraph",
@@ -3777,9 +3758,9 @@
         return matchNode.type === "Type" && matchNode.name === type;
       });
     }
-    function isProperty(node2, property) {
+    function isProperty(node2, property2) {
       return testNode(this, node2, function(matchNode) {
-        return matchNode.type === "Property" && matchNode.name === property;
+        return matchNode.type === "Property" && matchNode.name === property2;
       });
     }
     function isKeyword(node2) {
@@ -3992,7 +3973,7 @@
     var MatchError = requireError().MatchError;
     var names2 = requireNames();
     var generic2 = requireGeneric();
-    var parse2 = requireParse();
+    var parse = requireParse();
     var generate = requireGenerate();
     var walk2 = requireWalk();
     var prepareTokens = requirePrepareTokens();
@@ -4122,7 +4103,7 @@
             Object.defineProperty(descriptor, "syntax", {
               get: function() {
                 Object.defineProperty(descriptor, "syntax", {
-                  value: parse2(syntax2)
+                  value: parse(syntax2)
                 });
                 return descriptor.syntax;
               }
@@ -4193,11 +4174,11 @@
         return this.matchProperty(node2.property, node2.value);
       },
       matchProperty: function(propertyName, value2) {
-        var property = names2.property(propertyName);
-        if (property.custom) {
+        var property2 = names2.property(propertyName);
+        if (property2.custom) {
           return buildMatchResult(null, new Error("Lexer matching doesn't applicable for custom properties"));
         }
-        var propertySyntax = property.vendor ? this.getProperty(property.name) || this.getProperty(property.basename) : this.getProperty(property.name);
+        var propertySyntax = property2.vendor ? this.getProperty(property2.name) || this.getProperty(property2.basename) : this.getProperty(property2.name);
         if (!propertySyntax) {
           return buildMatchResult(null, new SyntaxReferenceError("Unknown property", propertyName));
         }
@@ -4922,11 +4903,11 @@
         aRoot = aRoot.replace(/\/$/, "");
         var level = 0;
         while (aPath.indexOf(aRoot + "/") !== 0) {
-          var index2 = aRoot.lastIndexOf("/");
-          if (index2 < 0) {
+          var index = aRoot.lastIndexOf("/");
+          if (index < 0) {
             return aPath;
           }
-          aRoot = aRoot.slice(0, index2);
+          aRoot = aRoot.slice(0, index);
           if (aRoot.match(/^([^\/]+:\/)?\/*$/)) {
             return aPath;
           }
@@ -5079,9 +5060,9 @@
             throw new Error("sourceMapURL could not be parsed");
           }
           if (parsed.path) {
-            var index2 = parsed.path.lastIndexOf("/");
-            if (index2 >= 0) {
-              parsed.path = parsed.path.substring(0, index2 + 1);
+            var index = parsed.path.lastIndexOf("/");
+            if (index >= 0) {
+              parsed.path = parsed.path.substring(0, index + 1);
             }
           }
           sourceURL = join(urlGenerate(parsed), sourceURL);
@@ -5798,7 +5779,7 @@
       }
       var fastTraversalIteratorsNatural = createFastTraveralMap(iteratorsNatural);
       var fastTraversalIteratorsReverse = createFastTraveralMap(iteratorsReverse);
-      var walk2 = function(root, options) {
+      var walk2 = function(root2, options) {
         function walkNode(node2, item, list) {
           enter.call(context, node2, item, list);
           if (iterators.hasOwnProperty(node2.type)) {
@@ -5810,7 +5791,7 @@
         var leave = noop;
         var iterators = iteratorsNatural;
         var context = {
-          root,
+          root: root2,
           stylesheet: null,
           atrule: null,
           atrulePrelude: null,
@@ -5846,7 +5827,7 @@
           enter = leave;
           leave = tmp;
         }
-        walkNode(root);
+        walkNode(root2);
       };
       walk2.find = function(ast, fn) {
         var found = null;
@@ -6013,7 +5994,7 @@
     var names2 = requireNames();
     var mix = requireMix();
     function createSyntax(config) {
-      var parse2 = createParser(config);
+      var parse = createParser(config);
       var walk2 = createWalker(config);
       var generate = createGenerator(config);
       var convert = createConvertor(walk2);
@@ -6032,7 +6013,7 @@
           return new Lexer(config2, syntax2, syntax2.lexer.structure);
         },
         tokenize,
-        parse: parse2,
+        parse,
         walk: walk2,
         generate,
         find: walk2.find,
@@ -6970,8 +6951,8 @@
       parse: function() {
         var start = this.scanner.tokenStart;
         var startToken = this.scanner.tokenIndex;
-        var property = readProperty.call(this);
-        var customProperty = isCustomProperty(property);
+        var property2 = readProperty.call(this);
+        var customProperty = isCustomProperty(property2);
         var parseValue = customProperty ? this.parseCustomProperty : this.parseValue;
         var consumeRaw = customProperty ? consumeCustomPropertyRaw : consumeValueRaw;
         var important = false;
@@ -6997,7 +6978,7 @@
           type: "Declaration",
           loc: this.getLocation(start, this.scanner.tokenStart),
           important,
-          property,
+          property: property2,
           value: value2
         };
       },
@@ -8974,13 +8955,8 @@
     return lib;
   }
   var libExports = requireLib();
-  const index = /* @__PURE__ */ getDefaultExportFromCjs(libExports);
-  const __CJS__import__0__$4 = /* @__PURE__ */ _mergeNamespaces({
-    __proto__: null,
-    default: index
-  }, [libExports]);
-  var module$m = { exports: {} };
-  module$m.exports = {
+  const csstree = /* @__PURE__ */ getDefaultExportFromCjs(libExports);
+  const assignmentExpression = {
     type: "assignmentExpression",
     transform(node2, ctx) {
       let left;
@@ -9014,13 +8990,7 @@
       this.Node(node2.right);
     }
   };
-  const __CJS__export_default__$m = (module$m.exports == null ? {} : module$m.exports).default || module$m.exports;
-  const __CJS__import__0__$3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$m
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$l = { exports: {} };
-  module$l.exports = {
+  const binaryExpression = {
     type: "binaryExpression",
     transform(left, right, operator) {
       return {
@@ -9036,13 +9006,7 @@
       this.Node(node2.right);
     }
   };
-  const __CJS__export_default__$l = (module$l.exports == null ? {} : module$l.exports).default || module$l.exports;
-  const __CJS__import__1__$2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$l
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$k = { exports: {} };
-  module$k.exports = {
+  const blockStatement = {
     type: "blockStatement",
     transform(node2, ctx) {
       const body = [];
@@ -9050,8 +9014,8 @@
         const statement = this.AssignmentExpression({ left: child2.property, right: child2.value }, ctx);
         body.push(statement);
       });
-      const returnStatement = this.ReturnStatement(null, ctx);
-      body.push(returnStatement);
+      const returnStatement2 = this.ReturnStatement(null, ctx);
+      body.push(returnStatement2);
       return {
         type: "blockStatement",
         body
@@ -9074,13 +9038,7 @@
       });
     }
   };
-  const __CJS__export_default__$k = (module$k.exports == null ? {} : module$k.exports).default || module$k.exports;
-  const __CJS__import__2__ = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$k
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$j = { exports: {} };
-  module$j.exports = {
+  const callExpression = {
     type: "callExpression",
     transform(node2, ctx) {
       const callee = this.Identifier(node2.callee);
@@ -9108,13 +9066,7 @@
       this.emit(")");
     }
   };
-  const __CJS__export_default__$j = (module$j.exports == null ? {} : module$j.exports).default || module$j.exports;
-  const __CJS__import__3__ = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$j
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$i = { exports: {} };
-  module$i.exports = {
+  const expressionStatement = {
     type: "expressionStatement",
     transform(node2) {
       const expression2 = this.CallExpression(node2);
@@ -9129,25 +9081,19 @@
         this.emit(";");
     }
   };
-  const __CJS__export_default__$i = (module$i.exports == null ? {} : module$i.exports).default || module$i.exports;
-  const __CJS__import__4__ = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$i
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$h = { exports: {} };
-  module$h.exports = {
+  const functionDeclaration = {
     type: "functionDeclaration",
     transform(node2, ctx) {
-      const identifier = this.Identifier(node2);
+      const identifier2 = this.Identifier(node2);
       const context = {
         type: "functionDeclaration",
-        identifier,
+        identifier: identifier2,
         param: "ctx"
       };
       const body = this.BlockStatement(ctx.block, context);
       return {
         type: "functionDeclaration",
-        identifier,
+        identifier: identifier2,
         body
       };
     },
@@ -9167,26 +9113,10 @@
       this.emit("}");
     }
   };
-  const __CJS__export_default__$h = (module$h.exports == null ? {} : module$h.exports).default || module$h.exports;
-  const __CJS__import__5__ = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$h
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$g = { exports: {} };
-  function sanitize$1(value2 = "") {
+  function sanitize(value2 = "") {
     return value2.replace(/-/g, "");
   }
-  module$g.exports = {
-    sanitize: sanitize$1
-  };
-  const __CJS__export_default__$g = (module$g.exports == null ? {} : module$g.exports).default || module$g.exports;
-  const __CJS__import__0__$2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$g
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$f = { exports: {} };
-  const { sanitize } = __CJS__export_default__$g || __CJS__import__0__$2;
-  module$f.exports = {
+  const identifier = {
     type: "identifier",
     transform(node2, ctx = "") {
       let name;
@@ -9214,13 +9144,7 @@
       this.emit(node2.name);
     }
   };
-  const __CJS__export_default__$f = (module$f.exports == null ? {} : module$f.exports).default || module$f.exports;
-  const __CJS__import__6__ = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$f
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$e = { exports: {} };
-  module$e.exports = {
+  const ifStatement = {
     type: "ifStatement",
     transform(node2, ctx) {
     },
@@ -9236,13 +9160,7 @@
       this.emit("}");
     }
   };
-  const __CJS__export_default__$e = (module$e.exports == null ? {} : module$e.exports).default || module$e.exports;
-  const __CJS__import__7__ = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$e
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$d = { exports: {} };
-  module$d.exports = {
+  const literal = {
     type: "literal",
     transform(node2) {
       let value2;
@@ -9262,17 +9180,11 @@
       this.emit(node2.value);
     }
   };
-  const __CJS__export_default__$d = (module$d.exports == null ? {} : module$d.exports).default || module$d.exports;
-  const __CJS__import__8__ = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$d
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$c = { exports: {} };
-  module$c.exports = {
+  const memberExpression = {
     type: "memberExpression",
     transform(node2, ctx) {
       let object;
-      let property;
+      let property2;
       if (node2.object.type == "TypeSelector") {
         object = this.Identifier(node2.object);
       } else if (node2.object) {
@@ -9281,16 +9193,16 @@
         this.error(node2);
       }
       if (node2.property.type == "IdSelector") {
-        property = this.CallExpression(node2.property, ctx);
+        property2 = this.CallExpression(node2.property, ctx);
       } else if (node2.property) {
-        property = this.Identifier(node2.property);
+        property2 = this.Identifier(node2.property);
       } else {
         this.error(node2);
       }
       return {
         type: "memberExpression",
         object,
-        property
+        property: property2
       };
     },
     transpile(node2, ctx) {
@@ -9299,19 +9211,13 @@
       this.Node(node2.property);
     }
   };
-  const __CJS__export_default__$c = (module$c.exports == null ? {} : module$c.exports).default || module$c.exports;
-  const __CJS__import__9__ = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$c
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$b = { exports: {} };
-  module$b.exports = {
+  const objectExpression = {
     type: "objectExpression",
     transform(node2, ctx) {
       const properties2 = [];
       node2.children.forEach((child2) => {
-        const property = this.Property(child2, ctx);
-        properties2.push(property);
+        const property2 = this.Property(child2, ctx);
+        properties2.push(property2);
       });
       return {
         type: "objectExpression",
@@ -9338,13 +9244,7 @@
       this.emit("}");
     }
   };
-  const __CJS__export_default__$b = (module$b.exports == null ? {} : module$b.exports).default || module$b.exports;
-  const __CJS__import__10__ = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$b
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$a = { exports: {} };
-  module$a.exports = {
+  const pipeExpression = {
     type: "pipeExpression",
     transform(node2, ctx) {
       let param, target, argument = "$1";
@@ -9374,13 +9274,7 @@
       this.emit(")");
     }
   };
-  const __CJS__export_default__$a = (module$a.exports == null ? {} : module$a.exports).default || module$a.exports;
-  const __CJS__import__11__ = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$a
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$9 = { exports: {} };
-  module$9.exports = {
+  const property = {
     type: "property",
     transform(node2, ctx) {
       const key = this.Identifier(node2.property);
@@ -9397,13 +9291,7 @@
       this.Node(node2.value);
     }
   };
-  const __CJS__export_default__$9 = (module$9.exports == null ? {} : module$9.exports).default || module$9.exports;
-  const __CJS__import__12__ = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$9
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$8 = { exports: {} };
-  module$8.exports = {
+  const returnStatement = {
     type: "returnStatement",
     transform(node2, ctx) {
       return {
@@ -9415,12 +9303,6 @@
       this.emit(`return ${node2.argument}`);
     }
   };
-  const __CJS__export_default__$8 = (module$8.exports == null ? {} : module$8.exports).default || module$8.exports;
-  const __CJS__import__13__ = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$8
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$7 = { exports: {} };
   class Context {
     constructor(options) {
       this.current = options.head;
@@ -9575,7 +9457,7 @@
         this.error(next);
     }
   }
-  module$7.exports = {
+  const root = {
     type: "root",
     transform(node2) {
       const statements = [];
@@ -9602,13 +9484,7 @@
       });
     }
   };
-  const __CJS__export_default__$7 = (module$7.exports == null ? {} : module$7.exports).default || module$7.exports;
-  const __CJS__import__14__ = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$7
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$6 = { exports: {} };
-  module$6.exports = {
+  const valueExpression = {
     type: "valueExpression",
     transform(node2, ctx) {
       let left;
@@ -9650,13 +9526,7 @@
       this.Node(node2);
     }
   };
-  const __CJS__export_default__$6 = (module$6.exports == null ? {} : module$6.exports).default || module$6.exports;
-  const __CJS__import__15__ = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$6
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$5 = { exports: {} };
-  module$5.exports = {
+  const whileStatement = {
     type: "whileStatement",
     transform(node2, ctx) {
     },
@@ -9681,47 +9551,34 @@
       this.emit("}");
     }
   };
-  const __CJS__export_default__$5 = (module$5.exports == null ? {} : module$5.exports).default || module$5.exports;
-  const __CJS__import__16__ = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const nodeSettings = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
-    default: __CJS__export_default__$5
+    AssignmentExpression: assignmentExpression,
+    BinaryExpression: binaryExpression,
+    BlockStatement: blockStatement,
+    CallExpression: callExpression,
+    ExpressionStatement: expressionStatement,
+    FunctionDeclaration: functionDeclaration,
+    Identifier: identifier,
+    IfStatement: ifStatement,
+    Literal: literal,
+    MemberExpression: memberExpression,
+    ObjectExpression: objectExpression,
+    PipeExpression: pipeExpression,
+    Property: property,
+    ReturnStatement: returnStatement,
+    Root: root,
+    ValueExpression: valueExpression,
+    WhileStatement: whileStatement
   }, Symbol.toStringTag, { value: "Module" }));
-  var module$4 = { exports: {} };
-  module$4.exports = {
-    AssignmentExpression: __CJS__export_default__$m || __CJS__import__0__$3,
-    BinaryExpression: __CJS__export_default__$l || __CJS__import__1__$2,
-    BlockStatement: __CJS__export_default__$k || __CJS__import__2__,
-    CallExpression: __CJS__export_default__$j || __CJS__import__3__,
-    ExpressionStatement: __CJS__export_default__$i || __CJS__import__4__,
-    FunctionDeclaration: __CJS__export_default__$h || __CJS__import__5__,
-    Identifier: __CJS__export_default__$f || __CJS__import__6__,
-    IfStatement: __CJS__export_default__$e || __CJS__import__7__,
-    Literal: __CJS__export_default__$d || __CJS__import__8__,
-    MemberExpression: __CJS__export_default__$c || __CJS__import__9__,
-    ObjectExpression: __CJS__export_default__$b || __CJS__import__10__,
-    PipeExpression: __CJS__export_default__$a || __CJS__import__11__,
-    Property: __CJS__export_default__$9 || __CJS__import__12__,
-    ReturnStatement: __CJS__export_default__$8 || __CJS__import__13__,
-    Root: __CJS__export_default__$7 || __CJS__import__14__,
-    ValueExpression: __CJS__export_default__$6 || __CJS__import__15__,
-    WhileStatement: __CJS__export_default__$5 || __CJS__import__16__
-  };
-  const __CJS__export_default__$4 = (module$4.exports == null ? {} : module$4.exports).default || module$4.exports;
-  const __CJS__import__0__$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$4
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$3 = { exports: {} };
-  const csstree = index || __CJS__import__0__$4;
-  const nodeSettings$1 = __CJS__export_default__$4 || __CJS__import__0__$1;
-  const transformer$1 = {
+  const transformer = {
     parse(source) {
-      const root = this.source_ast = csstree.parse(source, { parseValue: true, parseCustomProperty: true });
-      switch (root.type) {
+      const root2 = this.source_ast = csstree.parse(source, { parseValue: true, parseCustomProperty: true });
+      switch (root2.type) {
         case "StyleSheet":
-          return this.Root(root);
+          return this.Root(root2);
         default:
-          this.error(root);
+          this.error(root2);
           break;
       }
     },
@@ -9729,17 +9586,10 @@
       throw new Error(`This.error transforming ${node2.type} node`, node2);
     }
   };
-  for (const key in nodeSettings$1) {
-    transformer$1[key] = nodeSettings$1[key].transform;
+  for (const key in nodeSettings) {
+    transformer[key] = nodeSettings[key].transform;
   }
-  module$3.exports = transformer$1;
-  const __CJS__export_default__$3 = (module$3.exports == null ? {} : module$3.exports).default || module$3.exports;
-  const __CJS__import__0__ = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$3
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$2 = { exports: {} };
-  function loop_guard$1(timeout) {
+  function loop_guard(timeout) {
     const start = Date.now();
     return () => {
       if (Date.now() - start > timeout) {
@@ -9747,18 +9597,7 @@
       }
     };
   }
-  module$2.exports = {
-    loop_guard: loop_guard$1
-  };
-  const __CJS__export_default__$2 = (module$2.exports == null ? {} : module$2.exports).default || module$2.exports;
-  const __CJS__import__1__$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$2
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module$1 = { exports: {} };
-  const nodeSettings = __CJS__export_default__$4 || __CJS__import__0__$1;
-  const { loop_guard } = __CJS__export_default__$2 || __CJS__import__1__$1;
-  const transpiler$1 = {
+  const transpiler = {
     parse(ast, options = {}) {
       this.guardLoops = options.guardLoops !== void 0 ? options.guardLoops : true;
       this.buffer = "";
@@ -9810,34 +9649,16 @@
         this.hasLoopGuard = true;
         this.runtimeBuffer += loop_guard.toString();
       }
-    }
+    },
+    nodes: /* @__PURE__ */ new Map()
   };
-  transpiler$1.nodes = /* @__PURE__ */ new Map();
   for (const key in nodeSettings) {
     const node2 = nodeSettings[key];
-    transpiler$1.nodes.set(node2.type, node2.transpile);
-    transpiler$1[key] = node2.transpile;
+    transpiler.nodes.set(node2.type, node2.transpile);
+    transpiler[key] = node2.transpile;
   }
-  module$1.exports = transpiler$1;
-  const __CJS__export_default__$1 = (module$1.exports == null ? {} : module$1.exports).default || module$1.exports;
-  const __CJS__import__1__ = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: __CJS__export_default__$1
-  }, Symbol.toStringTag, { value: "Module" }));
-  var module = { exports: {} };
-  const transformer = __CJS__export_default__$3 || __CJS__import__0__;
-  const transpiler = __CJS__export_default__$1 || __CJS__import__1__;
-  function parse(source) {
-    const ast = transformer.parse(source);
-    const target = transpiler.parse(ast);
-    return target;
-  }
-  module.exports = {
-    transform: (src) => transformer.parse(src),
-    transpile: (ast) => transpiler.parse(ast),
-    parse
-  };
-  const __CJS__export_default__ = (module.exports == null ? {} : module.exports).default || module.exports;
+  const transform = (src) => transformer.parse(src);
+  const transpile = (ast) => transpiler.parse(ast);
   const examples = {
     call: `.sum {
 	height: calc(10 + 20);
@@ -9913,8 +9734,8 @@ console #log:matches(#is-not-0 result) {
       let js = "";
       console.log(js);
       try {
-        window.ast = __CJS__export_default__.transform(value);
-        js = __CJS__export_default__.transpile(window.ast);
+        window.ast = transform(value);
+        js = transpile(window.ast);
         cm_js.setValue(js);
       } catch (e) {
         console.error(e);

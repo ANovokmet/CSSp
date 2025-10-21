@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     type: 'blockStatement',
     transform(node, ctx) {
         const body = [];
