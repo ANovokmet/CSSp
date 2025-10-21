@@ -3,9 +3,10 @@
     "version": "0.0.1",
     "description": "A CSS programming language",
     "main": "index.js",
+    "type": "module",
     "scripts": {
-        "build": "rollup -c",
-        "dev": "rollup -c -w",
+        "build": "vite build",
+        "dev": "vite",
         "test": "node test/test.js",
         "pretest": "npm run build"
     },
@@ -26,11 +27,9 @@
     },
     "homepage": "https://github.com/ANovokmet/CSSp#readme",
     "devDependencies": {
-        "@rollup/plugin-commonjs": "^14.0.0",
-        "@rollup/plugin-json": "^4.1.0",
-        "@rollup/plugin-node-resolve": "^8.4.0",
         "css-tree": "^1.0.0-alpha.39",
-        "rollup": "^2.21.0"
+        "vite": "^7.1.11",
+        "vite-plugin-commonjs": "^0.10.4"
     },
     "files": [
         "dist"

@@ -1,3 +1,5 @@
+import CSSp from './index';
+
 const examples = {
     call: `.sum {\n\theight: calc(10 + 20);\n}\n\n#sum > console #log {\n\theight: 10;\n}`,
     if: `.is-not-5 {\n\t--result: calc(var(--a) - 5);\n}\nconsole #log:not(#is-not-5 result) {\n\t--a: 5;\n\t--logged: 'A is 5';\n}`,
@@ -11,8 +13,8 @@ const cm = CodeMirror(document.getElementById('code'), {
     lineNumbers: true,
     styleActiveLine: true,
     matchBrackets: true,
-    theme: 'blackboard'
 });
+console.log(document.getElementById('code'), cm);
 
 function loadValue() {
     if(window.location.hash) {
@@ -55,7 +57,7 @@ function onChange(cm) {
         }
 
         const result = eval(js);
-        console.log(result);
+        console.log('result:', result);
         resultElement.textContent = JSON.stringify(result, null, '\t');
     } catch (e) {
         console.error(e);
