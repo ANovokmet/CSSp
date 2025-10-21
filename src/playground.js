@@ -13,6 +13,7 @@ const cm = CodeMirror(document.getElementById('code'), {
     lineNumbers: true,
     styleActiveLine: true,
     matchBrackets: true,
+    theme: 'dracula'
 });
 console.log(document.getElementById('code'), cm);
 
