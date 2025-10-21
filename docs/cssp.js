@@ -9706,7 +9706,8 @@ console #log:matches(#is-not-0 result) {
     mode: "css",
     lineNumbers: true,
     styleActiveLine: true,
-    matchBrackets: true
+    matchBrackets: true,
+    theme: "dracula"
   });
   console.log(document.getElementById("code"), cm);
   function loadValue() {
