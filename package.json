@@ -8,7 +8,8 @@
         "build": "vite build",
         "dev": "vite",
         "test": "node test/test.js",
-        "pretest": "npm run build"
+        "pretest": "npm run build",
+        "vite-dev": "vite --config playground/vite.config.ts"
     },
     "repository": {
         "type": "git",
