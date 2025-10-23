@@ -1,0 +1,7 @@
+.sum {
+    height: calc(10 + 20);
+}
+
+#sum {
+    height: 10;
+}
