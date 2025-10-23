@@ -1,7 +1,11 @@
 .sum {
-    height: calc(10 + 20);
+    --message: calc('Hello ' + var(--name) + '!');
 }
 
-#sum {
-    height: 10;
+#sum > console #log {
+    --name: 'Ante';
+}
+
+console #log {
+    --message: 'Hello world!';
 }

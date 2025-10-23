@@ -28,6 +28,7 @@
     },
     "homepage": "https://github.com/ANovokmet/CSSp#readme",
     "devDependencies": {
+        "@types/node": "^24.9.1",
         "css-tree": "^1.0.0-alpha.39",
         "vite": "^7.1.11",
         "vite-plugin-commonjs": "^0.10.4"
